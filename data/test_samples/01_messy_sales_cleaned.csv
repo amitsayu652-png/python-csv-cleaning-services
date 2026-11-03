@@ -1,0 +1,33 @@
+invoice_id,sale_date,customer,region,item,units,unit_price,discount_pct,payment_method,status,notes
+INV-2001,01/10/2026,Aarav Sharma,West,Wireless Mouse,2,799.00,0,Upi,Paid,Regular Order
+INV-2002,02/10/2026,Diya Patel,West,Keyboard,1,"1,499.00",10,Card,Paid,Gift Wrap
+INV-2003,03/10/2026,Kabir Rao,South,Usb Cable,3,199,0,Cash,Pending,
+INV-2004,04/10/2026,Meera Iyer,South,Laptop Stand,1,"1,299",0,Upi,Paid,Deliver After 6 Pm
+INV-2005,05/10/2026,Rohan Das,East,Headphones,2,"2,499",5,Card,Paid,Quantity Written as a Word
+INV-2006,06/10/2026,Anaya Singh,North,Webcam,1,"1,899",0,Upi,Paid,
+INV-2007,07/10/2026,,West,Wireless Mouse,1,799,0,Cash,Paid,Customer Missing
+INV-2008,08/10/2026,Tara Nair,,Usb Cable,,199,0,Upi,Paid,
+INV-2009,,Vihaan Joshi,West,Keyboard,1,,,Card,Pending,
+INV-2010,N/A,Sana Ali,South,Laptop Stand,1,"1,299",0,Upi,Paid,Impossible Calendar Date
+INV-2011,N/A,Arjun Mehta,North,Headphones,1,"2,499.00",0,Card,Paid,Invalid Month
+INV-2012,03/04/2026,Nisha Kapoor,West,Wireless Mouse,2,799,0,Upi,Paid,Ambiguous Date
+INV-2013,13/10/2026,Dev Menon,South,Webcam,-2,"1,899",0,Card,Refunded,Possible Return
+INV-2014,14/10/2026,Pooja Jain,Central,Usb Cable,0,199,0,Upi,Cancelled,Zero Quantity
+INV-2015,15/10/2026,Kunal Verma,North,Keyboard,1.50,"1,499",0,Cash,Paid,Fractional Unit Count
+INV-2016,16/10/2026,Riya Bose,East,Laptop Stand,1,N/A,0,Upi,Paid,Price Is Text
+INV-2017,17/10/2026,Aditya Sen,North,Desk Organizer,2,N/A,0,Card,Paid,Malformed Decimal
+INV-2018,18/10/2026,Avni Gupta,West,Headphones,1,N/A,0,Upi,Paid,Letter O in Number
+INV-2019,19/10/2026,Neil Thomas,South,"Cable, Usb-C",4,249,0,Card,Paid,"Customer Said ""Urgent"""
+INV-2020,20/10/2026,Zoya Khan,Central,Webcam,1,"1,899",110,Upi,Paid,Discount Above 100 Percent
+INV-2021,21/10/2026,Reyansh Roy,East,Wireless Mouse,1,799,-5,Cash,Paid,Negative Discount
+INV-2022,22/10/2026,Aisha Paul,Northeast,Keyboard,1,"1,499",0,Barter,Maybe,Unknown Category Values
+INV-2023,23/10/2026,Dhruv Sethi,North,Laptop Stand,1,"-1,299",0,Card,Refunded,Possible Credit
+INV-2024,24/10/2026,Maya Dsouza,West,Desk Organizer,2,0,100,Upi,Paid,Possible Complimentary Order
+INV-2025,25/10/2026,Om Prakash,Central,Usb Cable,5,199,0,,,
+INV-2026,N/A,Ira Kapoor,West,Mouse Pad,1,399,0,Upi,Paid,Unparseable Date
+INV-2027,27/10/2026,,South,Usb Hub,1,"1,299",0,Card,Pending,Whitespace-Only Customer
+INV-2028,28/10/2026,Sahil Shah,West,Usb Hub,1,N/A,10,Upi,Paid,Malformed Grouping and Text Discount
+INV-2029,29/10/2026,Leena Roy,East,Monitor,1,"12,999.00",0,Card,Paid,Currency Symbol
+INV-2030,30/10/2026,Omar Ali,North,Hdmi Cable,3,299,0,Upi,Paid,Valid Control Row
+inv-2002,02/10/2026,Diya Patel,West,Keyboard,1,"1,499",10,Card,Paid,Gift Wrap
+INV-2006,06/10/2026,Anaya Singh,North,Webcam,3,"1,899",0,Upi,Paid,Conflicting Quantity for an Existing Invoice

@@ -1,0 +1,4 @@
+ticket_id,opened_at,priority,summary
+T-001,2026-10-01,low,Valid first ticket
+T-002,2026-10-02,high,"This summary never closes
+T-003,2026-10-03,medium,This line is swallowed by the open quote

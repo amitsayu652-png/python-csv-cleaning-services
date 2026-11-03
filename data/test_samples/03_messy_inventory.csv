@@ -1,0 +1,19 @@
+sku,warehouse,description,stock_on_hand,reorder_level,cost_inr,last_counted,supplier_code,discontinued
+000045,WH-A,"Steel Bottle, 750 ml",120,20,349.50,2026-10-01,SUP-001,false
+SKU-002, wh-b ,  desk LAMP  , 18 ,5,₹899.00,02/10/2026, sup-002 ,FALSE
+SKU-003,WH-A,Notebook,0,10,49.00,2026/10/03,SUP-001,no
+SKU-004,WH-C,Packing Tape,-3,5,39.00,2026-10-04,SUP-003,false
+SKU-005,WH-A,Printer Paper,2.5,10,299,2026-10-05,SUP-004,false
+SKU-006,WH-B,Cable Tie,many,50,1.25,2026-10-06,SUP-005,false
+SKU-007,WH-A,Office Chair,,2,"4,999.00",2026-10-07,,false
+SKU-008,WH-C,Desk Mat,9,,,2026-10-08,SUP-006,
+SKU-009,WH-A,Storage Box,12,-1,199,2026-10-09,SUP-007,false
+SKU-010,WH-B,Marker Pen,24,6,2O.00,2026-10-10,SUP-008,false
+SKU-011,WH-B,Replacement Part,6,1,0,2026-10-11,SUP-009,true
+SKU-012,WH-C,Measuring Tape,8,2,-99,31/02/2026,SUP-010,false
+SKU-013,UNKNOWN,Safety Gloves,15,5,79,2026-10-13,SUP-011,maybe
+SKU-014,WH-A,Label Roll,1e3,100,"12,50",2026-10-14,SUP-012,0
+SKU-015,WH-C,"""Premium"" Folder",10,2,59,not-recorded,SUP-013,yes
+,WH-A,Item without SKU,1,1,100,2026-10-16,SUP-014,false
+000045,WH-B,"Steel Bottle, 750 ml",45,20,349.50,2026-10-01,SUP-001,false
+000045,WH-A,"Steel Bottle, 750 ml",120,20,349.50,2026-10-01,SUP-001,false

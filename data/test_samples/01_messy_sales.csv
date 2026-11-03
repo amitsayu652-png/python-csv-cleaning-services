@@ -1,0 +1,35 @@
+invoice_id,sale_date,customer,region,item,units,unit_price,discount_pct,payment_method,status,notes
+INV-2001,2026-10-01,Aarav Sharma,West,Wireless Mouse,2,799.00,0,UPI,paid,Regular order
+INV-2002,02/10/2026,  diya PATEL  , west ,Keyboard,1,"1,499.00",10,card,PAID,  Gift wrap  
+INV-2003,2026/10/03,KABIR RAO,South,USB Cable,3,199,0,CASH, pending ,
+INV-2004,4 Oct 2026,Meera Iyer,South,Laptop Stand,1,INR 1299,0,UPI,Paid,Deliver after 6 pm
+INV-2005,05-10-2026,Rohan Das,East,Headphones,two,2499,5,card,paid,Quantity written as a word
+INV-2006,2026-10-06,Anaya Singh,North,Webcam,1,1899,0,UPI,paid,
+INV-2007,2026-10-07,,West,Wireless Mouse,1,799,0,cash,paid,Customer missing
+INV-2008,2026-10-08,Tara Nair,,USB Cable,,199,0,UPI,paid,
+INV-2009,,Vihaan Joshi,West,Keyboard,1,,,card,pending,
+INV-2010,2026-02-30,Sana Ali,South,Laptop Stand,1,1299,0,UPI,paid,Impossible calendar date
+INV-2011,2026-13-10,Arjun Mehta,North,Headphones,1,"2,499.00",0,card,paid,Invalid month
+INV-2012,03/04/2026,Nisha Kapoor,West,Wireless Mouse,2,799,0,UPI,paid,Ambiguous date
+INV-2013,2026-10-13,Dev Menon,South,Webcam,-2,1899,0,card,refunded,Possible return
+INV-2014,2026-10-14,Pooja Jain,Central,USB Cable,0,199,0,UPI,cancelled,Zero quantity
+INV-2015,2026-10-15,Kunal Verma,North,Keyboard,1.5,1499,0,cash,paid,Fractional unit count
+INV-2016,2026-10-16,Riya Bose,East,Laptop Stand,1,free,0,UPI,paid,Price is text
+INV-2017,2026-10-17,Aditya Sen,North,Desk Organizer,2,12..50,0,card,paid,Malformed decimal
+INV-2018,2026-10-18,Avni Gupta,West,Headphones,1,2O99,0,UPI,paid,Letter O in number
+INV-2019,2026-10-19,Neil Thomas,South,"Cable, USB-C",4,249,0,card,paid,"Customer said ""urgent"""
+INV-2020,2026-10-20,Zoya Khan,Central,Webcam,1,1899,110,UPI,paid,Discount above 100 percent
+INV-2021,2026-10-21,Reyansh Roy,East,Wireless Mouse,1,799,-5,cash,paid,Negative discount
+INV-2022,2026-10-22,Aisha Paul,Northeast,Keyboard,1,1499,0,barter,maybe,Unknown category values
+INV-2023,2026-10-23,Dhruv Sethi,North,Laptop Stand,1,-1299,0,card,refunded,Possible credit
+INV-2024,2026-10-24,Maya Dsouza,West,Desk Organizer,2,0,100,UPI,paid,Possible complimentary order
+INV-2025,2026-10-25,Om Prakash,Central,USB Cable,5,199,0,,,
+INV-2026,not-a-date,Ira Kapoor,West,Mouse Pad,1,399,0,UPI,paid,Unparseable date
+INV-2027,2026-10-27,   ,South,USB Hub,1,1299,0,card,pending,Whitespace-only customer
+INV-2028,2026-10-28,Sahil Shah,West,USB Hub,1,"1,2,99",ten,UPI,paid,Malformed grouping and text discount
+INV-2029,2026-10-29,Leena Roy,East,Monitor,1,"₹12,999.00",0,card,paid,Currency symbol
+INV-2030,2026-10-30,Omar Ali,North,HDMI Cable,3,299,0,UPI,paid,Valid control row
+INV-2001,2026-10-01,Aarav Sharma,West,Wireless Mouse,2,799.00,0,UPI,paid,Regular order
+INV-2006,2026-10-06,Anaya Singh,North,Webcam,1,1899,0,UPI,paid,
+ inv-2002 ,2026-10-02,Diya Patel,West,Keyboard,1,1499,10,CARD,paid,Gift wrap
+INV-2006,2026-10-06,Anaya Singh,North,Webcam,3,1899,0,UPI,paid,Conflicting quantity for an existing invoice

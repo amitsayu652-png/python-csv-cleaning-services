@@ -1,0 +1,26 @@
+﻿customer_id,full_name,email,phone,postal_code,signup_date,account_balance,is_active,tags,notes
+000001,José Álvarez,jose@example.com,+34 600 123 456,00123,2026-10-01,0.00,true,retail,Leading zeros are significant
+9007199254740993,李小龙,li@example.com,0086 13800138000,010000,2026-10-02,125.50,TRUE,international,Identifier exceeds exact JavaScript integer range
+C-003,"Anne ""Annie"" O’Neill",anne@example.com,+353 87 123 4567,D02 X285,2026-10-03,-25.00,false,"vip,newsletter",Please call before delivery
+C-004,Mina Das,mina@example.com,+91 98765 43210,700001,2026-10-04,250.00,yes,retail,"Address line one
+Address line two"
+C-005,Aarav Sharma,aarav@example.com,+91 91234 56789,400001,2026-10-05,"1 299,50",1,retail,Nonbreaking name space; narrow nonbreaking number space
+C-006,	Tara Nair	, tara@example.com ,+91 90000 00001,682001,2026-10-06,"1.299,50",0,new,Tabs at name boundaries; decimal comma
+C-007,Nisha​ Kapoor,nisha@example.com,+91 90000 00002,110001,2026-10-07,"1,299.50",no,new,Zero-width space in name
+C-008,NULL,null.user@example.com,,00000,2026-10-08,NaN,NULL,N/A,Literal missing-like tokens: define a policy
+C-009,NA,na.user@example.com,,NA,2026-10-09,Infinity,FALSE,NULL,More missing-like tokens
+C-010,Empty Cell,,,,2026-10-10,,,,
+C-011,Whitespace Only,   ,	, ,2026-10-11,   , ,,
+C-012,Scientific Number,sci@example.com,,100001,2026-10-12,1e3,true,test,Do not strip the e and silently produce 13
+C-013,Accounting Credit,credit@example.com,,100002,2026-10-13,"(1,299.50)",false,test,Parentheses may indicate a negative balance
+C-014,Mixed Locale,locale@example.com,,100003,03/04/2026,"12,50",Y,test,Ambiguous date and decimal convention
+C-015,Partial Date,partial@example.com,,100004,10/2026,99.99,N,test,Day is unspecified
+C-016,Leap Day Valid,leap@example.com,,100005,2024-02-29,0,true,test,Valid leap date
+C-017,Leap Day Invalid,badleap@example.com,,100006,2026-02-29,0,true,test,Invalid leap date
+C-018,Timezone Date,time@example.com,,100007,2026-10-18T23:30:00-05:00,10,true,test,Timezone conversion can change the calendar day
+C-019,Bad Email,not-an-email,00001234,00100,2026-10-19,99.999999,maybe,test,Phone and postcode must remain text
+C-020,Exact Decimal,decimal@example.com,,100008,2026-10-20,0.12345678901234567890,true,test,Preserve source precision or document rounding
+C-021,Delimiter Test,delimiter@example.com,,100009,2026-10-21,10,true,one;two|three,"Commas, semicolons; pipes | and ""quotes"" are data"
+C-022,Literal Formula,formula@example.com,,100010,2026-10-22,10,true,test,=1+1
+,,,,,,,,,
+C-003,"Anne ""Annie"" O’Neill",anne.updated@example.com,+353 87 123 4567,D02 X285,2026-10-03,-25.00,false,"vip,newsletter",Same ID with a changed email; not an exact duplicate

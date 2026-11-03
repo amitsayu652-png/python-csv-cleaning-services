@@ -1,0 +1,175 @@
+﻿record,row,column,original_value,cleaned_value,issue,action
+1,2,sale_date,2026-10-01,01/10/2026,Normalized value,Normalized date
+1,2,payment_method,UPI,Upi,Normalized value,Normalized name
+1,2,status,paid,Paid,Normalized value,Normalized name
+1,2,notes,Regular order,Regular Order,Normalized value,Normalized name
+2,3,customer,  diya PATEL  ,Diya Patel,Normalized value,Trimmed whitespace; Normalized name
+2,3,region, west ,West,Normalized value,Trimmed whitespace; Normalized name
+2,3,payment_method,card,Card,Normalized value,Normalized name
+2,3,status,PAID,Paid,Normalized value,Normalized name
+2,3,notes,  Gift wrap  ,Gift Wrap,Normalized value,Trimmed whitespace; Normalized name
+3,4,sale_date,2026/10/03,03/10/2026,Normalized value,Normalized date
+3,4,customer,KABIR RAO,Kabir Rao,Normalized value,Normalized name
+3,4,item,USB Cable,Usb Cable,Normalized value,Normalized name
+3,4,payment_method,CASH,Cash,Normalized value,Normalized name
+3,4,status, pending ,Pending,Normalized value,Trimmed whitespace; Normalized name
+3,4,notes,,,Missing value,Left missing
+4,5,sale_date,4 Oct 2026,04/10/2026,Normalized value,Normalized date
+4,5,unit_price,INR 1299,"1,299",Normalized value,Normalized number
+4,5,payment_method,UPI,Upi,Normalized value,Normalized name
+4,5,notes,Deliver after 6 pm,Deliver After 6 Pm,Normalized value,Normalized name
+5,6,sale_date,05-10-2026,05/10/2026,Normalized value,Normalized date
+5,6,units,two,2,Normalized value,Normalized number
+5,6,unit_price,2499,"2,499",Normalized value,Normalized number
+5,6,payment_method,card,Card,Normalized value,Normalized name
+5,6,status,paid,Paid,Normalized value,Normalized name
+5,6,notes,Quantity written as a word,Quantity Written as a Word,Normalized value,Normalized name
+6,7,sale_date,2026-10-06,06/10/2026,Normalized value,Normalized date
+6,7,unit_price,1899,"1,899",Normalized value,Normalized number
+6,7,payment_method,UPI,Upi,Normalized value,Normalized name
+6,7,status,paid,Paid,Normalized value,Normalized name
+6,7,notes,,,Missing value,Left missing
+7,8,sale_date,2026-10-07,07/10/2026,Normalized value,Normalized date
+7,8,customer,,,Missing value,Left missing
+7,8,payment_method,cash,Cash,Normalized value,Normalized name
+7,8,status,paid,Paid,Normalized value,Normalized name
+7,8,notes,Customer missing,Customer Missing,Normalized value,Normalized name
+8,9,sale_date,2026-10-08,08/10/2026,Normalized value,Normalized date
+8,9,region,,,Missing value,Left missing
+8,9,item,USB Cable,Usb Cable,Normalized value,Normalized name
+8,9,units,,,Missing value,Left missing
+8,9,payment_method,UPI,Upi,Normalized value,Normalized name
+8,9,status,paid,Paid,Normalized value,Normalized name
+8,9,notes,,,Missing value,Left missing
+9,10,sale_date,,,Missing value,Left missing
+9,10,unit_price,,,Missing value,Left missing
+9,10,discount_pct,,,Missing value,Left missing
+9,10,payment_method,card,Card,Normalized value,Normalized name
+9,10,status,pending,Pending,Normalized value,Normalized name
+9,10,notes,,,Missing value,Left missing
+10,11,sale_date,2026-02-30,N/A,Invalid date,Marked invalid date as N/A
+10,11,unit_price,1299,"1,299",Normalized value,Normalized number
+10,11,payment_method,UPI,Upi,Normalized value,Normalized name
+10,11,status,paid,Paid,Normalized value,Normalized name
+10,11,notes,Impossible calendar date,Impossible Calendar Date,Normalized value,Normalized name
+11,12,sale_date,2026-13-10,N/A,Invalid date,Marked invalid date as N/A
+11,12,payment_method,card,Card,Normalized value,Normalized name
+11,12,status,paid,Paid,Normalized value,Normalized name
+11,12,notes,Invalid month,Invalid Month,Normalized value,Normalized name
+12,13,payment_method,UPI,Upi,Normalized value,Normalized name
+12,13,status,paid,Paid,Normalized value,Normalized name
+12,13,notes,Ambiguous date,Ambiguous Date,Normalized value,Normalized name
+13,14,sale_date,2026-10-13,13/10/2026,Normalized value,Normalized date
+13,14,unit_price,1899,"1,899",Normalized value,Normalized number
+13,14,payment_method,card,Card,Normalized value,Normalized name
+13,14,status,refunded,Refunded,Normalized value,Normalized name
+13,14,notes,Possible return,Possible Return,Normalized value,Normalized name
+14,15,sale_date,2026-10-14,14/10/2026,Normalized value,Normalized date
+14,15,item,USB Cable,Usb Cable,Normalized value,Normalized name
+14,15,payment_method,UPI,Upi,Normalized value,Normalized name
+14,15,status,cancelled,Cancelled,Normalized value,Normalized name
+14,15,notes,Zero quantity,Zero Quantity,Normalized value,Normalized name
+15,16,sale_date,2026-10-15,15/10/2026,Normalized value,Normalized date
+15,16,units,1.5,1.50,Normalized value,Normalized number
+15,16,unit_price,1499,"1,499",Normalized value,Normalized number
+15,16,payment_method,cash,Cash,Normalized value,Normalized name
+15,16,status,paid,Paid,Normalized value,Normalized name
+15,16,notes,Fractional unit count,Fractional Unit Count,Normalized value,Normalized name
+16,17,sale_date,2026-10-16,16/10/2026,Normalized value,Normalized date
+16,17,unit_price,free,N/A,Invalid number,Replaced with N/A; Marked invalid number as N/A
+16,17,payment_method,UPI,Upi,Normalized value,Normalized name
+16,17,status,paid,Paid,Normalized value,Normalized name
+16,17,notes,Price is text,Price Is Text,Normalized value,Normalized name
+17,18,sale_date,2026-10-17,17/10/2026,Normalized value,Normalized date
+17,18,unit_price,12..50,N/A,Invalid number,Replaced with N/A; Marked invalid number as N/A
+17,18,payment_method,card,Card,Normalized value,Normalized name
+17,18,status,paid,Paid,Normalized value,Normalized name
+17,18,notes,Malformed decimal,Malformed Decimal,Normalized value,Normalized name
+18,19,sale_date,2026-10-18,18/10/2026,Normalized value,Normalized date
+18,19,unit_price,2O99,N/A,Invalid number,Replaced with N/A; Marked invalid number as N/A
+18,19,payment_method,UPI,Upi,Normalized value,Normalized name
+18,19,status,paid,Paid,Normalized value,Normalized name
+18,19,notes,Letter O in number,Letter O in Number,Normalized value,Normalized name
+19,20,sale_date,2026-10-19,19/10/2026,Normalized value,Normalized date
+19,20,item,"Cable, USB-C","Cable, Usb-C",Normalized value,Normalized name
+19,20,payment_method,card,Card,Normalized value,Normalized name
+19,20,status,paid,Paid,Normalized value,Normalized name
+19,20,notes,"Customer said ""urgent""","Customer Said ""Urgent""",Normalized value,Normalized name
+20,21,sale_date,2026-10-20,20/10/2026,Normalized value,Normalized date
+20,21,unit_price,1899,"1,899",Normalized value,Normalized number
+20,21,payment_method,UPI,Upi,Normalized value,Normalized name
+20,21,status,paid,Paid,Normalized value,Normalized name
+20,21,notes,Discount above 100 percent,Discount Above 100 Percent,Normalized value,Normalized name
+21,22,sale_date,2026-10-21,21/10/2026,Normalized value,Normalized date
+21,22,payment_method,cash,Cash,Normalized value,Normalized name
+21,22,status,paid,Paid,Normalized value,Normalized name
+21,22,notes,Negative discount,Negative Discount,Normalized value,Normalized name
+22,23,sale_date,2026-10-22,22/10/2026,Normalized value,Normalized date
+22,23,unit_price,1499,"1,499",Normalized value,Normalized number
+22,23,payment_method,barter,Barter,Normalized value,Normalized name
+22,23,status,maybe,Maybe,Normalized value,Normalized name
+22,23,notes,Unknown category values,Unknown Category Values,Normalized value,Normalized name
+23,24,sale_date,2026-10-23,23/10/2026,Normalized value,Normalized date
+23,24,unit_price,-1299,"-1,299",Normalized value,Normalized number
+23,24,payment_method,card,Card,Normalized value,Normalized name
+23,24,status,refunded,Refunded,Normalized value,Normalized name
+23,24,notes,Possible credit,Possible Credit,Normalized value,Normalized name
+24,25,sale_date,2026-10-24,24/10/2026,Normalized value,Normalized date
+24,25,payment_method,UPI,Upi,Normalized value,Normalized name
+24,25,status,paid,Paid,Normalized value,Normalized name
+24,25,notes,Possible complimentary order,Possible Complimentary Order,Normalized value,Normalized name
+25,26,sale_date,2026-10-25,25/10/2026,Normalized value,Normalized date
+25,26,item,USB Cable,Usb Cable,Normalized value,Normalized name
+25,26,payment_method,,,Missing value,Left missing
+25,26,status,,,Missing value,Left missing
+25,26,notes,,,Missing value,Left missing
+26,27,sale_date,not-a-date,N/A,Invalid date,Marked invalid date as N/A
+26,27,payment_method,UPI,Upi,Normalized value,Normalized name
+26,27,status,paid,Paid,Normalized value,Normalized name
+26,27,notes,Unparseable date,Unparseable Date,Normalized value,Normalized name
+27,28,sale_date,2026-10-27,27/10/2026,Normalized value,Normalized date
+27,28,customer,   ,,Missing value,Marked blank cell as missing
+27,28,item,USB Hub,Usb Hub,Normalized value,Normalized name
+27,28,unit_price,1299,"1,299",Normalized value,Normalized number
+27,28,payment_method,card,Card,Normalized value,Normalized name
+27,28,status,pending,Pending,Normalized value,Normalized name
+27,28,notes,Whitespace-only customer,Whitespace-Only Customer,Normalized value,Normalized name
+28,29,sale_date,2026-10-28,28/10/2026,Normalized value,Normalized date
+28,29,item,USB Hub,Usb Hub,Normalized value,Normalized name
+28,29,unit_price,"1,2,99",N/A,Invalid number,Replaced with N/A; Marked invalid number as N/A
+28,29,discount_pct,ten,10,Normalized value,Normalized number
+28,29,payment_method,UPI,Upi,Normalized value,Normalized name
+28,29,status,paid,Paid,Normalized value,Normalized name
+28,29,notes,Malformed grouping and text discount,Malformed Grouping and Text Discount,Normalized value,Normalized name
+29,30,sale_date,2026-10-29,29/10/2026,Normalized value,Normalized date
+29,30,unit_price,"₹12,999.00","12,999.00",Normalized value,Normalized number
+29,30,payment_method,card,Card,Normalized value,Normalized name
+29,30,status,paid,Paid,Normalized value,Normalized name
+29,30,notes,Currency symbol,Currency Symbol,Normalized value,Normalized name
+30,31,sale_date,2026-10-30,30/10/2026,Normalized value,Normalized date
+30,31,item,HDMI Cable,Hdmi Cable,Normalized value,Normalized name
+30,31,payment_method,UPI,Upi,Normalized value,Normalized name
+30,31,status,paid,Paid,Normalized value,Normalized name
+30,31,notes,Valid control row,Valid Control Row,Normalized value,Normalized name
+31,32,sale_date,2026-10-01,01/10/2026,Normalized value,Normalized date
+31,32,payment_method,UPI,Upi,Normalized value,Normalized name
+31,32,status,paid,Paid,Normalized value,Normalized name
+31,32,notes,Regular order,Regular Order,Normalized value,Normalized name
+31,32,,,,Duplicate row,Removed duplicate row; kept the first occurrence
+32,33,sale_date,2026-10-06,06/10/2026,Normalized value,Normalized date
+32,33,unit_price,1899,"1,899",Normalized value,Normalized number
+32,33,payment_method,UPI,Upi,Normalized value,Normalized name
+32,33,status,paid,Paid,Normalized value,Normalized name
+32,33,notes,,,Missing value,Left missing
+32,33,,,,Duplicate row,Removed duplicate row; kept the first occurrence
+33,34,invoice_id, inv-2002 ,inv-2002,Normalized value,Trimmed whitespace
+33,34,sale_date,2026-10-02,02/10/2026,Normalized value,Normalized date
+33,34,unit_price,1499,"1,499",Normalized value,Normalized number
+33,34,payment_method,CARD,Card,Normalized value,Normalized name
+33,34,status,paid,Paid,Normalized value,Normalized name
+33,34,notes,Gift wrap,Gift Wrap,Normalized value,Normalized name
+34,35,sale_date,2026-10-06,06/10/2026,Normalized value,Normalized date
+34,35,unit_price,1899,"1,899",Normalized value,Normalized number
+34,35,payment_method,UPI,Upi,Normalized value,Normalized name
+34,35,status,paid,Paid,Normalized value,Normalized name
+34,35,notes,Conflicting quantity for an existing invoice,Conflicting Quantity for an Existing Invoice,Normalized value,Normalized name
