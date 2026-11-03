@@ -1,319 +1,277 @@
-# CSV cleaning and reports
+# CSV cleaner with audit reports
 
-Clean selected CSV columns, save the cleaned data, and review a report of what
-changed. You choose each column's cleaning rule; the program does not automatically
-decide whether a column contains names, dates, numbers, or identifiers.
+A Python project for cleaning CSV files with explicit column rules. Normalize
+names, dates, numbers, emails, booleans, and category labels while preserving
+identifiers and keeping a report of changes and invalid values.
 
-The reusable API is `clean_csv()` in `src/clean_csv.py`. The script runs it through
-`main()` and `clean()`. Paths and options are supplied through Python function
-calls. The script does not read command-line options such as `--input_path`.
+Column types are chosen by the caller. The cleaner does not guess whether a
+number-looking field is an ID, phone number, amount, or date.
 
 ## Setup
 
-Use Python 3.10 or newer. Run these commands from the project root in Windows
-PowerShell.
-
-For a fresh environment:
+Requires Python 3.10 or newer. From the repository root in Windows PowerShell:
 
 ```powershell
 py -3 -m venv .pvenv
-```
-
-Install the dependencies using that environment's Python:
-
-```powershell
-.\.pvenv\Scripts\python.exe -m pip install pandas python-dateutil titlecase word2number regex
-```
-
-`requirements.txt` is currently empty, so installing from it alone will not install
-these dependencies. Activating the environment is optional when using the full
-interpreter path shown above.
-
-## Run the included sample
-
-```powershell
+.\.pvenv\Scripts\python.exe -m pip install -r requirements.txt
 .\.pvenv\Scripts\python.exe -B src\clean_csv.py
 ```
 
-The script runs `main()`, which calls `clean()`. That function selects the input
-and cleaning rules, calls `clean_csv()`, saves the detailed report, and prints the
-summary.
+On macOS or Linux, create the environment with `python3 -m venv .pvenv` and use
+`.pvenv/bin/python` in place of `.\.pvenv\Scripts\python.exe`.
 
-The bundled configuration uses `data/test_samples/01_messy_sales.csv`. Its
-default outputs are saved beside the input:
+The default run cleans the sales sample. It prints a summary and writes
+`01_messy_sales_cleaned.csv` and `01_messy_sales_report.csv` under `data/output/`.
+Input samples are never overwritten. Generated outputs and private data are
+ignored by Git. Running a sample again replaces its previous generated outputs.
 
-- `01_messy_sales_cleaned.csv`: cleaned data.
-- `01_messy_sales_report.csv`: changes, missing cells, invalid values, and removed
-  duplicate rows.
+There are no command-line arguments. Configure the Python functions directly.
 
-To change the bundled run, edit `CSV_PATH` and the options passed inside `clean()`.
-For another program or a future UI, call `clean_csv()` directly as shown below.
+## Run the test samples
 
-The current `clean()` configuration trims all 11 sales columns, applies name
-capitalization to `customer`, `region`, `item`, `payment_method`, `status`, and
-`notes`, parses `sale_date`, and cleans `units`, `unit_price`, and `discount_pct`.
-That capitalization also changes acronyms and free text, such as `UPI` to `Upi`.
-Choose the `names` columns carefully; the direct-call example below limits it to
-customers and regions so product names, payment labels, statuses, and notes are
-only trimmed. There is no payment-label mapping or `smart_title()` rule built in.
+From a Python session at the repository root:
 
-## Use the function directly
+```python
+from src.sample_configs import run_sample
 
-Run this code from the project root, for example in a Python session or a script
-that can import the `src` directory:
+report = run_sample("sales")
+# Other presets: "customers", "inventory", "malformed"
+```
+
+Or run all four:
+
+```powershell
+.\.pvenv\Scripts\python.exe -B -c "from src.sample_configs import SAMPLE_CONFIGS, run_sample; [run_sample(name) for name in SAMPLE_CONFIGS]"
+```
+
+Presets live in `src/sample_configs.py`. Each declares types and validation rules
+for that file's headers; the engine itself has no sales-specific assumptions.
+`run_sample(name, output_dir=...)` accepts a different output directory and creates
+it if necessary.
+
+| Sample | Input → output records | Duplicates removed | Missing cells | Invalid cells | Records with conflicting keys |
+| --- | --- | --- | --- | --- | --- |
+| Sales | 34 → 32 | 2 | 15 | 12 | 2 |
+| Customers | 24 → 24 | 0 | 40 | 6 | 2 |
+| Inventory | 18 → 17 | 1 | 6 | 11 | 0 |
+| Malformed quote | File failure | — | — | — | — |
+
+Counts are for the checked-in fixtures and presets. Missing and invalid counts
+refer to original records, including records later removed as duplicates. A
+missing required value counts as both missing and invalid.
+
+The malformed sample deliberately has an unclosed quote. Its run saves a failed
+report and writes no cleaned CSV; it does not guess how to repair the file. An
+older cleaned file, if present at that output path, is left untouched and is not
+listed as an output of the failed run.
+
+## Clean another CSV
 
 ```python
 from pathlib import Path
-from src.clean_csv import clean_csv, print_report, save_report
+from src.clean_csv import ColumnRule, clean_csv, print_report, save_report
 
 report = clean_csv(
     csv_path=Path("data/test_samples/01_messy_sales.csv"),
-    has_headers=True,
-    trailing_spaces=list(range(11)),
-    names=["customer", "region"],
-    dates=["sale_date"],
-    numbers=["units", "unit_price", "discount_pct"],
-    digit_separator=",",
-    remove_duplicates=True,
-    date_input_format=None,
-    day_first_output=True,
+    output_path=Path("data/test_samples/example_cleaned.csv"),
+    trim_all=True,
+    rules={
+        "invoice_id": ColumnRule("text", required=True),
+        "customer": ColumnRule("name"),
+        "sale_date": ColumnRule("date", ambiguous_dates="day_first"),
+        "units": ColumnRule("integer"),
+        "unit_price": ColumnRule("number"),
+        "discount_pct": ColumnRule("number", minimum=0, maximum=100),
+        "payment_method": ColumnRule("category", choices={"upi": "UPI", "card": "Card", "cash": "Cash"}),
+    },
+    unique_keys=["invoice_id"],
 )
 
 report_path = save_report(report)
 print_report(report, report_path)
+if report.status == "failed":
+    print(report.error)
 ```
 
-`clean_csv()` saves the cleaned CSV and returns a `Report`. It does not print the
-summary or save the report CSV itself:
+`clean_csv()` saves the cleaned CSV and returns a `Report`. It does not save or
+print the audit automatically; use `save_report()` and `print_report()` as above.
+For custom paths, their parent directories must already exist. The source,
+cleaned output, and report must have different paths.
 
-- Call `save_report(report)` to write the detailed report and receive its path.
-- Call `print_report(report, report_path)` to print the summary and both output
-  paths. The report path is optional when no detailed report has been saved.
-- Use the returned `Report` directly when another application needs the results.
+Header names or zero-based positions can be used as selectors. For headerless
+files, use `has_headers=False` and positions such as `rules={0: ColumnRule("name")}`.
+Headerless input stays headerless on export by default. Set `output_headers=True`
+to add numeric column labels if desired. Duplicate or blank input headers are
+rejected rather than silently renamed.
 
-## Column selection and options
+## Column rules
 
-Each cleaning option accepts a list of header names, zero-based column positions,
-or a mixture of the two. For example, `names=["customer", 3]` selects the
-named column and the fourth column.
-
-| Option | Default | Behavior |
-| --- | --- | --- |
-| `csv_path` | Required | Path to the input CSV. |
-| `has_headers` | `True` | Uses the first record as column names. Set to `False` when the file has no header. |
-| `trailing_spaces` | `None` | Trims leading and trailing whitespace in the listed columns. |
-| `names` | `None` | Lowercases text before applying name capitalization; tokens containing `@` remain lowercase. |
-| `dates` | `None` | Parses dates in the listed columns and writes `DD/MM/YYYY` text. |
-| `numbers` | `None` | Parses and formats values in the listed numeric columns. |
-| `digit_separator` | `","` | Output grouping for numbers. Use `","`, `"_"`, or `""` for no grouping. |
-| `remove_duplicates` | `True` | Removes exact duplicate rows after cleaning and keeps the first occurrence. |
-| `date_input_format` | `None` | Uses automatic date parsing. Supply a format for a known, consistent input layout. |
-| `day_first_output` | `True` | Prefers day-first interpretation of ambiguous input dates when no input format is supplied. |
-| `output_path` | `None` | Saves beside the input as `<input_stem>_cleaned.csv`; supply a path to change this. |
-
-`None` or an empty list skips a cleaning rule. Column position `0` is valid.
-Columns without a selected cleaning rule keep their parsed values. Pandas still
-recognizes default missing-value tokens such as `NA`, `NULL`, and `N/A` throughout
-the input, including unselected columns. Removing duplicate rows applies to the
-whole dataset when enabled. Keep identifiers, phone numbers, and postal codes out
-of `numbers` if their leading zeros and original formatting must be preserved.
-
-### Headerless CSVs
-
-Use `has_headers=False` and column positions. This example assumes a file whose
-first three columns contain a name, a date, and an amount:
-
-```python
-report = clean_csv(
-    csv_path=Path("data/no_headers.csv"),
-    has_headers=False,
-    trailing_spaces=[0, 1, 2],
-    names=[0],
-    dates=[1],
-    numbers=[2],
-)
-```
-
-Pandas assigns numeric column labels starting at `0`. The current export writes
-those labels as a header row in the cleaned output, including for headerless
-input. The input setting does not disable output headers.
-
-### Dates
-
-`date_input_format` describes the **input**, including its literal separators:
-
-- `%d/%m/%Y` matches `03/04/2026` as 3 April 2026.
-- `%m/%d/%Y` matches `03/04/2026` as March 4, 2026.
-- `%Y-%m-%d` matches `2026-04-03`.
-
-For mixed input layouts, leave `date_input_format=None`. Automatic parsing accepts
-common numeric and month-name dates, prefers day-first input by default, and
-preserves year-first interpretation for values such as `2026-04-03`. Parsing that
-fails produces `N/A` and an invalid-date report entry.
-
-Despite its name, **`day_first_output` controls input interpretation**, not the
-output layout. Set it to `False` to prefer month-first ambiguous input. An explicit
-`date_input_format` takes precedence. The cleaner's date output is `DD/MM/YYYY`.
-Automatic parsing can fill missing components of incomplete dates; use an explicit
-input format when complete dates must match a known layout.
-
-### Numbers and names
-
-Numeric cleaning uses a decimal point and treats commas as grouping separators.
-With the default `digit_separator=","`, `1234` becomes `1,234` and `1234.5` becomes
-`1,234.50`. Float output uses two decimal places when grouping is enabled. An empty
-separator disables that formatting step. Negative signs are preserved.
-
-Values are read as strings, and numeric results are saved as formatted strings.
-This preserves integer/decimal presentation rather than creating Python numeric
-types in the output CSV. Formatting can change the original decimal precision.
-
-The numeric helper first tries `word2number`, so `two` becomes `2` and `ten`
-becomes `10`. If that fails, it trims whitespace, removes the first recognized
-currency symbol, code, or name, rejects remaining letters, and validates the
-whole remaining numeric string before removing commas. This accepts an optional
-leading `+` or `-`, digits, optional three-digit comma grouping, and an optional
-decimal part with digits on both sides of the decimal point.
-
-| Input | Result with `digit_separator=","` |
+| `kind` | Behavior |
 | --- | --- |
-| `1,499.00` | `1,499.00` |
-| `INR 1299` | `1,299` |
+| `text` | Preserves text; optionally trims its boundaries. Use for IDs, phones, postal codes, notes, and product descriptions. |
+| `name` | Normalizes human-name capitalization and Unicode whitespace. Avoid this rule for acronyms, notes, and product codes. |
+| `email` | Trims, lowercases, and performs a basic address-shape check. Does not check deliverability. |
+| `date` | Requires a complete day, month and four-digit year; normalizes the output layout. |
+| `number` | Parses amounts with `Decimal`, retaining source decimal precision unless rounding is requested. |
+| `integer` | Requires a whole number; accepts scientific notation when its value is integral. |
+| `boolean` | Maps true/false, yes/no, y/n and 1/0 to `true` or `false`, ignoring case. |
+| `category` | Uses a case-insensitive `choices` mapping; unknown labels are flagged. |
+
+| Rule option | Default | Purpose |
+| --- | --- | --- |
+| `trim` | `True` | Trim leading and trailing whitespace before normalization. |
+| `required` | `False` | Flag a missing value as invalid. |
+| `missing_tokens` | `()` | Extra missing tokens for this column, matched case-insensitively. |
+| `decimal_mark` | `"."` | Numeric decimal convention: `"."`, `","`, or `"auto"`. |
+| `decimal_places` | `None` | Preserve precision; an integer explicitly requests rounding and a fixed decimal scale. |
+| `minimum`, `maximum` | `None` | Optional inclusive numeric bounds. String or `Decimal` bounds avoid float conversion. |
+| `allow_words` | `True` | Permit English number words such as `two` and `ten`. |
+| `input_format` | `None` | Explicit date input format such as `%m/%d/%Y`; it must describe a complete date. |
+| `output_format` | `%d/%m/%Y` | Date output layout; for example `%Y-%m-%d` for ISO dates. |
+| `ambiguous_dates` | `"reject"` | Reject ambiguous day/month input, or explicitly choose `"day_first"` or `"month_first"`. |
+| `choices` | `None` | Required mapping for category rules, such as `{"upi": "UPI"}`. |
+
+Only selected columns are normalized. `trim_all=True` additionally trims every
+column without applying name casing or numeric conversion. Free text and quoted
+multiline fields otherwise retain their content. Blank cells are missing; literal
+tokens such as `NA`, `NULL`, and `N/A` remain text unless explicitly configured as
+missing for a selected column. This preserves a postal code such as `NA`.
+
+## Numeric parsing
+
+Numeric strings are parsed with `Decimal`, not binary floating point. Signs,
+scientific notation, accounting parentheses, common currency symbols/codes/names,
+and valid three-digit grouping are supported. Currency markers are removed;
+amounts are not converted between currencies. Unexpected letters, malformed
+grouping, infinity, and NaN are rejected. Number words are checked before calling
+`word2number`; arbitrary words mixed with digits are not silently discarded.
+
+| Input | Result with the relevant rule |
+| --- | --- |
+| `INR 1299` or `INR1299` | `1,299` |
 | `₹12,999.00` | `12,999.00` |
-| `-2` | `-2` |
-| `two` | `2` |
-| `2O99` (letter O) | Invalid number; saved as `N/A`. |
-| `1,2,99` | Invalid number; saved as `N/A`. |
-| `12/50` or `12..50` | Invalid number; saved as `N/A`. |
+| `two` / `ten` | `2` / `10` |
+| `1e3` | `1,000` |
+| `(1,299.50)` | `-1,299.50` |
+| `1.299,50` or `1 299,50` with `decimal_mark="auto"` | `1,299.50` |
+| `12,50` with `decimal_mark=","` or `"auto"` | `12.50` |
+| `0.12345678901234567890` | Precision retained, including the final zero. |
+| `2O99`, `1,2,99`, `12/50`, `12..50` | Flagged as invalid. |
 
-Currency detection uses the `regex` package for Unicode currency symbols and a
-fixed list of currency codes and names. It removes currency text, but does not
-convert between currencies or record currency units. Codes and names require word
-boundaries: `INR 1299` is supported, while `INR1299` is not. Scientific notation,
-decimal-comma amounts, Indian-style comma grouping, accounting parentheses, `.5`,
-and `5.` are not supported by the numeric-format validator. The initial
-`word2number` attempt is permissive and can ignore additional non-number words.
+Auto locale mode is a documented heuristic: when both separators occur, the last
+is treated as decimal; a comma-only value matching three-digit grouping is
+treated as grouped integer, otherwise a single comma may be decimal. Thus
+`1,234` means 1234 in auto mode. Choose `decimal_mark=","` to declare that it means
+1.234. A dot-only value is treated as decimal. Indian-style grouping such as
+`1,29,999` is not supported. Do not rely on auto mode for ambiguous conventions.
 
-Name cleaning lowercases the input, then uses `titlecase`. Tokens containing `@`
-remain lowercase, which helps normalize email-like text, but the function does
-not validate email addresses. Acronyms such as `UPI` are not preserved reliably.
-Use this rule for names, trim free-text notes without changing their case, and
-handle category labels with a separate mapping if consistent labels are needed.
+Output grouping is controlled by `digit_separator`: `","` (default), `"_"`, or
+`""` for no grouping. Decimal output always uses a dot. `decimal_places=None`
+preserves parsed scale; `decimal_places=2` explicitly rounds using Decimal's
+round-half-even convention. Numeric results in a CSV are text representations,
+not stored Python types. Parsing limits are 2000 input characters and an exponent
+between -1000 and 1000.
 
-### Sales sample coverage and remaining rules
+The sales preset allows negative quantities and prices for returns/credits,
+requires whole units, and bounds discounts to 0–100. The inventory preset rejects
+negative stock, reorder levels, and costs. These are editable sample policies.
 
-With the current `clean()` configuration, the included sales sample produces:
+## Dates
 
-- 34 input records and 32 cleaned records, after removing two exact duplicates.
-- 15 missing cells in selected columns.
-- Seven invalid values: three dates and four numbers.
+Automatic date parsing accepts complete numeric dates, common English month-name
+dates, and ISO dates/timestamps. Impossible dates and incomplete values such as
+`10/2026` become invalid instead of borrowing today's day. Two-digit years are
+not inferred in automatic mode.
 
-The invalid numbers are `free` (INV-2016), `12..50` (INV-2017), `2O99`
-(INV-2018), and `1,2,99` (INV-2028). The invalid dates are `2026-02-30`,
-`2026-13-10`, and `not-a-date`. Each is replaced with `N/A` and included in the
-report; worded quantities and discounts now convert successfully.
+A `ColumnRule("date")` rejects `03/04/2026` by default. The sample presets choose
+day-first interpretation and also report such values as `Ambiguous date` so the
+choice remains visible. An explicit `input_format` takes precedence.
 
-The cleaner normalizes formats but does not enforce sales business rules:
+Timestamp output uses the calendar date in the source offset, without timezone
+conversion. The report explains that choice for offset-aware timestamps. Time
+and offset are omitted by the default date-only output format; use an explicit
+`output_format` to retain them. This is date normalization, not timezone inference.
 
-- Discounts `110` and `-5` remain valid numbers; no 0–100 range is enforced.
-- Fractional units such as `1.5` are accepted; no integer-only rule is enforced.
-- Unknown payment methods and statuses such as `barter` and `maybe` are not flagged.
-- Negative quantities and prices are preserved, allowing returns and credits.
-- Conflicting records sharing an invoice ID are retained unless every cleaned
-  column matches. There is no invoice-ID reconciliation or case normalization.
-- `03/04/2026` is interpreted as 3 April under the default day-first setting;
-  the intended date cannot be inferred from that value alone.
+## General options and compatibility
 
-Other inputs are in `data/test_samples/02_adversarial_customers.csv` and
-`data/test_samples/03_messy_inventory.csv`. Select rules for their own headers;
-the positional configuration in `clean()` is specific to the sales schema.
-`04_malformed_unclosed_quote.csv` tests a file-level parsing failure: pandas
-raises `ParserError` before cleaning starts, and no cleaning report is returned.
+The original `trailing_spaces`, `names`, `dates`, and `numbers` lists are still
+supported. New `rules` entries take precedence for the same column. The legacy
+`day_first_output=True` parameter still controls **input** interpretation for the
+legacy `dates` list; prefer a rule's `ambiguous_dates` for new configurations.
 
-## How cleaning and reporting work
+Other `clean_csv()` options include:
 
-1. Read the CSV as strings and remember original record positions.
-2. Process selected columns in this order: whitespace, names, dates, then numbers.
-3. Record actual changes, retaining the value before the first action and the
-   final cleaned value. Multiple actions on one cell are combined in one entry.
-4. Record missing cells once across overlapping cleaners. Existing missing cells
-   stay missing; whitespace-only cells in selected columns are marked as missing.
-5. Mark invalid dates and unparseable numbers as `N/A`, record the issue, and
-   continue processing. Missing cells and invalid values are counted separately.
-6. Optionally remove exact duplicate cleaned rows. Every cleaned column must
-   match; a shared identifier alone does not make two rows duplicates.
-7. Save the cleaned CSV without a pandas index column and return the `Report`.
+- `remove_duplicates=True`: remove exact duplicate normalized rows and keep the
+  first. Sharing an ID alone never deletes a record.
+- `unique_keys=[...]`: flag retained records with the same key and different
+  contents. Supports composite keys such as SKU plus warehouse. Keys remain
+  case-sensitive; conflicts are reported for review, not merged.
+- `invalid_policy="mark"`: replace invalid values with `N/A`. Use `"keep"` to
+  retain original invalid text and still report the failure.
+- `missing_tokens=()`: additional missing tokens for all selected columns.
+- `delimiter=","`, `encoding="utf-8-sig"`: explicit input dialect/encoding. UTF-8
+  BOMs are accepted. Cleaned UTF-8 output is written without a BOM.
+- `has_headers=True`, `output_headers=None`: use input headers and preserve their
+  presence on output by default.
+- `output_path=None`: by default, write `<input_stem>_cleaned.csv` beside the input.
 
-The original input is preserved. Custom output directories must already exist.
-The input, cleaned output, and report must use different paths. Re-running with
-the same output paths replaces the previous outputs.
+Invalid column selectors and rule settings raise `ValueError`. File read and CSV
+parse failures return `Report(status="failed")`, with no partial cleaned export.
+Output write errors propagate to the caller. No automatic delimiter, header, type,
+locale, currency-conversion, or timezone detection is performed beyond the
+explicit numeric auto-locale option.
 
-To choose custom paths:
+## Reports
 
-```python
-report = clean_csv(
-    csv_path=Path("data/test_samples/01_messy_sales.csv"),
-    dates=["sale_date"],
-    output_path=Path("data/test_samples/custom_cleaned.csv"),
-)
-report_path = save_report(report, Path("data/test_samples/custom_report.csv"))
-print_report(report, report_path)
-```
+`print_report()` shows success/failure, row counts, duplicates, changed columns,
+missing and invalid cells, conflicting-key records, and generated paths.
 
-## Read the results
-
-### Terminal summary
-
-`print_report()` shows record counts before and after cleaning, duplicates removed,
-edited columns, missing cells in selected columns, invalid values, and output
-paths. Unselected missing cells are not included in the missing-cell count.
-
-### Detailed report CSV
-
-The report uses UTF-8 with a byte-order mark for spreadsheet compatibility. It
-has these columns:
+`save_report(report, report_path=None)` writes a UTF-8 BOM CSV. Its columns are:
 
 | Column | Meaning |
 | --- | --- |
-| `record` | Original data record, starting at 1, before duplicate removal. |
-| `row` | Original record position plus one if the input has a header. |
-| `column` | Header name, or zero-based column label for headerless input. Blank for a removed duplicate row. |
-| `original_value` | Value before the first cleaning action on that cell. |
-| `cleaned_value` | Final cleaned value. Blank for missing cells or a whole-row duplicate entry. |
-| `issue` | Normalized value, missing value, invalid date, invalid number, or duplicate row. |
-| `action` | Action taken; multiple actions on the same cell are combined. |
+| `record` | Original parsed data record, starting at 1, before duplicate removal. |
+| `row` | Physical line where that source record starts, accounting for headers, blank lines and quoted multiline fields. |
+| `column` | Header name or zero-based label; blank for a whole-record/file issue. |
+| `original_value` | Cell text before cleaning. |
+| `cleaned_value` | Final text; blank for missing or whole-record/file issues. |
+| `issue` | Normalization, missing/invalid value, ambiguous date, duplicate, key conflict, or file error. |
+| `action` | Actions taken on the cell or record. |
+| `reason` | Specific validation failure or explanation of a parsing decision. |
 
-`record` is the reliable reference to a parsed data record. `row` is a
-header-adjusted record position, **not a guaranteed physical file line number**:
-skipped blank lines and quoted multiline records can change that relationship.
+Entries for deleted duplicate records remain in the audit. A successful run with
+no issues still writes report headers. File failures use the current record/start
+line where available; `0` means a position could not be established.
 
-Entries for records removed as duplicates remain in the report so their original
-positions can be reviewed. A run with no issues still saves the report headers.
+The returned `Report` contains `b_rows`, `a_rows`, `duplicates_removed`,
+`edited_columns`, `missing_values`, `invalid_values`, `conflicts`, `edits`,
+`issues`, `input_path`, `output_path`, `status`, and `error`.
 
-### Returned `Report` object
+Literal spreadsheet formulas in free text are preserved as data, not evaluated by
+this program. A spreadsheet application may interpret them when opening a CSV.
 
-| Attribute | Meaning |
-| --- | --- |
-| `b_rows`, `a_rows` | Number of data records before and after cleaning. |
-| `duplicates_removed` | Difference between the before and after counts. |
-| `edited_columns` | Columns whose values actually changed. |
-| `missing_values` | Unique `MissingPosition(row, col)` entries for selected columns. |
-| `invalid_values` | Number of invalid-date and invalid-number entries. |
-| `edits` | Human-readable action counts. |
-| `issues` | Detailed `CleaningIssue` entries used for the report CSV. |
-| `input_path`, `output_path` | Input and cleaned-output paths. |
-
-## Tests
-
-The report tests are in `tests/test_clean_csv_report.py`. They currently import and
-call the former function name `clean_csv2`. Those references need to be changed to
-`clean_csv` before the suite can run against the current API.
-
-After that test update, run from the project root:
+## Development
 
 ```powershell
+.\.pvenv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.pvenv\Scripts\python.exe -m ruff check .
+.\.pvenv\Scripts\python.exe -m ruff format --check .
 .\.pvenv\Scripts\python.exe -B -m unittest discover -s tests -v
 ```
 
-The checks cover report counts, original values, missing cells, headerless input,
-invalid numbers, duplicate removal, empty reports, and output-path protection.
+Tests cover the four fixtures, exact numeric precision, locales, date ambiguity,
+missing-token policies, physical source lines, validation, reports, duplicates,
+conflicts, headerless files, and source-file protection. Test outputs use temporary
+directories. GitHub Actions runs lint, formatting and tests on Windows and Linux
+with Python 3.10 and 3.12. See `CONTRIBUTING.md` for contribution guidelines.
+
+```text
+src/clean_csv.py           General cleaner, helpers, rules, and reporting
+src/sample_configs.py      Editable sample schemas and runner
+data/test_samples/         Synthetic input fixtures (including one malformed file)
+data/output/               Generated results; ignored by Git
+data/private/              Local private inputs; ignored by Git
+tests/                     Unit and fixture regression tests
+requirements.txt           Runtime dependencies
+requirements-dev.txt       Runtime dependencies plus development tools
+```

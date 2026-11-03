@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.clean_csv import Report, clean_csv2, print_report, save_report
+from src.clean_csv import Report, clean_csv, print_report, save_report
 
 
 class CleaningReportTests(unittest.TestCase):
@@ -32,9 +32,7 @@ class CleaningReportTests(unittest.TestCase):
             "Bob,2026-02-30,free,keep\n"
         )
         source = self.write_input(content)
-        report = clean_csv2(
-            source, trailing_spaces=[0, 1, 2], names=[0], dates=[1], numbers=[2]
-        )
+        report = clean_csv(source, trailing_spaces=[0, 1, 2], names=[0], dates=[1], numbers=[2])
 
         self.assertIsInstance(report, Report)
         self.assertEqual((report.b_rows, report.a_rows), (4, 3))
@@ -46,9 +44,7 @@ class CleaningReportTests(unittest.TestCase):
             {(4, "name"), (4, "amount")},
         )
         self.assertEqual(len(report.missing_values), 2)
-        first_name = next(
-            issue for issue in report.issues if issue.record == 1 and issue.column == "name"
-        )
+        first_name = next(issue for issue in report.issues if issue.record == 1 and issue.column == "name")
         self.assertEqual(first_name.original_value, " alice ")
         self.assertEqual(first_name.cleaned_value, "Alice")
         self.assertIn("Trimmed whitespace", first_name.action)
@@ -66,9 +62,10 @@ class CleaningReportTests(unittest.TestCase):
         rows = self.read_report(report_path)
         self.assertEqual(report_path.name, "input_report.csv")
         self.assertEqual(len(rows), len(report.issues))
-        self.assertEqual(list(rows[0]), [
-            "record", "row", "column", "original_value", "cleaned_value", "issue", "action"
-        ])
+        self.assertEqual(
+            list(rows[0]),
+            ["record", "row", "column", "original_value", "cleaned_value", "issue", "action", "reason"],
+        )
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
             print_report(report, report_path)
@@ -80,9 +77,14 @@ class CleaningReportTests(unittest.TestCase):
 
     def test_all_cleaners_track_missing_cells_once_with_headerless_input(self):
         source = self.write_input("alice,2026-10-01,123,00123\n,,,00999\n")
-        report = clean_csv2(
-            source, has_headers=False, trailing_spaces=[0, 1, 2], names=[0],
-            dates=[1], numbers=[2], remove_duplicates=False,
+        report = clean_csv(
+            source,
+            has_headers=False,
+            trailing_spaces=[0, 1, 2],
+            names=[0],
+            dates=[1],
+            numbers=[2],
+            remove_duplicates=False,
         )
         self.assertEqual(len(report.missing_values), 3)
         self.assertEqual(
@@ -95,7 +97,7 @@ class CleaningReportTests(unittest.TestCase):
 
     def test_whitespace_only_values_are_reported_as_missing(self):
         source = self.write_input("name,tag\n   ,00123\n")
-        report = clean_csv2(source, trailing_spaces=[0], names=[0])
+        report = clean_csv(source, trailing_spaces=[0], names=[0])
         self.assertEqual(len(report.missing_values), 1)
         self.assertEqual(len(report.issues), 1)
         self.assertEqual(report.issues[0].original_value, "   ")
@@ -104,16 +106,15 @@ class CleaningReportTests(unittest.TestCase):
 
     def test_invalid_numbers_are_reported_without_stopping_other_rows(self):
         source = self.write_input("amount\n1.2.3\n123.50\n")
-        report = clean_csv2(source, numbers=[0])
+        report = clean_csv(source, numbers=[0])
         self.assertEqual(report.invalid_values, 1)
         invalid = next(issue for issue in report.issues if issue.issue == "Invalid number")
-        self.assertEqual((invalid.record, invalid.original_value, invalid.cleaned_value),
-                         (1, "1.2.3", "N/A"))
+        self.assertEqual((invalid.record, invalid.original_value, invalid.cleaned_value), (1, "1.2.3", "N/A"))
         self.assertEqual(report.a_rows, 2)
 
     def test_no_issues_still_saves_a_csv_header(self):
         source = self.write_input("name\nAlice\n")
-        report = clean_csv2(source, names=[0])
+        report = clean_csv(source, names=[0])
         self.assertEqual(report.issues, [])
         self.assertEqual(report.edited_columns, [])
         path = save_report(report)
@@ -124,8 +125,8 @@ class CleaningReportTests(unittest.TestCase):
         content = "name\nalice\n"
         source = self.write_input(content)
         with self.assertRaises(ValueError):
-            clean_csv2(source, output_path=source)
-        report = clean_csv2(source, names=[0])
+            clean_csv(source, output_path=source)
+        report = clean_csv(source, names=[0])
         for path in (source, report.output_path):
             with self.subTest(path=path), self.assertRaises(ValueError):
                 save_report(report, path)
@@ -133,7 +134,7 @@ class CleaningReportTests(unittest.TestCase):
 
     def test_duplicate_removal_can_be_disabled(self):
         source = self.write_input("name\nAlice\nAlice\n")
-        report = clean_csv2(source, names=[0], remove_duplicates=False)
+        report = clean_csv(source, names=[0], remove_duplicates=False)
         self.assertEqual((report.b_rows, report.a_rows), (2, 2))
         self.assertEqual(report.duplicates_removed, 0)
         self.assertEqual(report.issues, [])

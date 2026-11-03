@@ -1,0 +1,5 @@
+pandas>=2.2,<4
+python-dateutil>=2.9,<4
+titlecase>=2.4,<3
+word2number==1.1
+regex>=2024.11.6
